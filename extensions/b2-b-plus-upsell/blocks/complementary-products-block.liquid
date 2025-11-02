@@ -1,0 +1,62 @@
+{% assign api_key =  shop.metafields.b2bplus.SHOPIFY_API_KEY %}
+{% assign shared_secret =  shop.metafields.b2bplus.SHOPIFY_API_SECRET %}
+{% assign timestamp = 'now' | date: '%s' %}
+{% assign message = api_key | append: timestamp %}
+{% assign hmac = message | hmac_sha256: shared_secret %}
+{% assign app_domain = shop.metafields.b2bplus.app_domain %}
+{% assign enable_complementary_products = shop.metafields.b2bplus.enableComplementaryProducts %}
+{% assign store_type = shop.metafields.b2bplus.storeType %}
+{% assign trial_end_date = shop.metafields.b2bplus.trialHardStopEndDate %}
+{% assign current_date = 'now' | date: '%Y-%m-%d' %}
+{% assign nowTime = 'now' | date: '%s' %}
+{% assign customerId = customer.id | url_encode %}
+
+{% capture get_params %}
+?api_key={{ api_key | url_encode }}
+&appDomain={{ app_domain | url_encode }}
+&customerId={{ customerId }}
+&shopId={{ shop.id | url_encode }}
+&shopDomain={{ shop.permanent_domain | url_encode }}
+&storeType={{ store_type | url_encode }}
+&timestamp={{ timestamp | url_encode }}
+&hmac={{ hmac | url_encode }}
+&productVariantId={{ product.selected_or_first_available_variant.id | json }}
+&productId={{ product.id | json }}
+&v={{ nowTime | url_encode }}
+{% endcapture %}
+
+{% comment %} {% if enable_complementary_products == 'true' and trial_end_date >= current_date %} {% endcomment %}
+  {% if enable_complementary_products == 'true' %}
+    <div id="complementary-product-block"> 
+    </div>
+    <div id="complementary-product-toast" class="toast" style="display: none;">
+    </div>
+    {% assign themeData = shop.metafields.b2bplus.themeScriptsConfig.value %}
+    {% for index in themeData %}
+      {% if index.role == "MAIN" and index.mainJS.status == true %}
+        {% assign mainJS = index.mainJS.status %}
+        <script src="https://{{ app_domain }}/{{ index.mainJS.src }}?v={{ nowTime }}" type="text/javascript" defer></script>  
+        {% break %}
+      {% endif %}
+    {% endfor %}
+
+    {% for index in themeData %}
+      {% if index.role == "MAIN" and index.cpBlock.status == true %}
+        {% assign cpBlockStatus = index.cpBlock.status %}
+        <script src="https://{{ app_domain }}/{{ index.cpBlock.src }}{{ get_params }}" type="text/javascript" defer></script>  
+        {% break %}
+      {% endif %}
+    {% endfor %}
+
+    {{ 'styles.css' | asset_url: 'extension' | stylesheet_tag }}
+  {%  endif %}
+{% schema %}
+{
+  "name": "Complementary Product",
+  "target": "section",
+  "enabled_on": {
+    "templates": ["product"]
+  },
+  "settings": []
+}
+{% endschema %}

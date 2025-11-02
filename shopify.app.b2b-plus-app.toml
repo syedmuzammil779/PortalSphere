@@ -1,0 +1,43 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "7ecac0e3075baea1fd1a0ee82dba6397"
+name = "b2b-plus-app"
+handle = "b2b-plus-app-3"
+application_url = "https://chad-much-ericsson-held.trycloudflare.com"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "b2bplus-dev-store.myshopify.com"
+include_config_on_deploy = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_inventory,read_assigned_fulfillment_orders,read_content,read_customers,read_discounts,read_merchant_managed_fulfillment_orders,read_orders,read_products,read_third_party_fulfillment_orders,write_content,write_customers,write_discounts,write_online_store_pages"
+
+[auth]
+redirect_urls = [
+  "https://chad-much-ericsson-held.trycloudflare.com/auth/callback",
+  "https://chad-much-ericsson-held.trycloudflare.com/auth/shopify/callback",
+  "https://chad-much-ericsson-held.trycloudflare.com/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2024-07"
+
+  [[webhooks.subscriptions]]
+  topics = [
+  "app/uninstalled",
+  "fulfillment_orders/order_routing_complete",
+  "orders/edited",
+  "orders/fulfilled",
+  "orders/updated",
+  "products/create",
+  "products/delete",
+  "products/update"
+]
+  uri = "/webhooks"
+  compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
+
+[pos]
+embedded = false

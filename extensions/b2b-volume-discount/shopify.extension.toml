@@ -1,0 +1,24 @@
+api_version = "2025-07"
+
+[[extensions]]
+name = "t:name"
+handle = "b2b-volume-discount"
+
+uid = "d0afda12-c964-b962-ee6f-f21ce3476251e83a8c21"
+
+type = "function"
+
+description = "t:description"
+
+  [[extensions.targeting]]
+  target = "purchase.product-discount.run"
+  input_query = "src/run.graphql"
+  export = "run"
+
+  [extensions.build]
+  command = ""
+  path = "dist/function.wasm"
+
+  [extensions.ui.paths]
+  create = "/"
+  details = "/"

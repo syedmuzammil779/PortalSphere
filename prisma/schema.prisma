@@ -1,0 +1,439 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  table_id           BigInt    @default(autoincrement())
+  id                 String    @id
+  shop               String
+  state              String
+  isOnline           Boolean   @default(false)
+  scope              String?
+  expires            DateTime?
+  accessToken        String
+  userId             BigInt?
+  firstName          String?
+  lastName           String?
+  email              String?
+  accountOwner       Boolean   @default(false)
+  locale             String?
+  collaborator       Boolean?  @default(false)
+  emailVerified      Boolean?  @default(false)
+  createdAt          DateTime  @default(now()) @db.Timestamp(6)
+  billingFlag        Boolean   @default(false)
+  shopId             String?
+  appUrl             String?
+  wholesale_template String    @default("default")
+  fixedBillAmount    Int?
+  topProductsFlag    Boolean   @default(false)
+  scriptsFlag        Boolean   @default(false)
+  baseScriptFolder   String    @default("default")
+  baseScriptPath     String    @default("main")
+  themeBaseFlag      Boolean   @default(true) 
+  appSettingsFlag    Boolean   @default(false)
+  compProductsFlag   Boolean   @default(false)
+}
+
+model ButtonClicks {
+  id                BigInt   @id @default(autoincrement())
+  shopId            BigInt
+  customerId        String 
+  tag               String?
+  buttonType        String?
+  operation         String?
+  createdAt         DateTime @default(now()) @db.Timestamp(6)
+
+  @@index([shopId, customerId])
+}
+
+model ShopOrders {
+  id                BigInt   @id @default(autoincrement())
+  shopId            BigInt
+  shopifyId         BigInt 
+  graphQLId         String?
+  name              String?
+  email             String?
+  subtotalPrice     String?
+  currency          String? 
+  fulfillmentStatus String?
+  financialStatus   String?
+  checkoutId        String?
+  checkoutToken     String?
+  tags              String?
+  totalPrice        String?
+  discounts         Json   
+  billingAddress    Json
+  shippingAddress   Json
+  customer          Json
+  paymentTerms      Json
+  createdAt         String?
+  updatedAt         String?
+
+  lineItems         ShopOrderLineItems[]  @relation("ShopOrdersToLineItems")
+
+  @@unique([shopId, shopifyId])
+  @@index([shopId, name])
+  @@index([shopId, updatedAt])
+}
+
+model ShopOrderLineItems {
+  id                BigInt            @id @default(autoincrement())
+  orderId           BigInt?
+  shopifyId         BigInt?
+  productId         BigInt?
+  variantId         BigInt?
+  quantity          BigInt?
+  price             String?
+  createdAt         String?
+  updatedAt         String?
+  discounts         Json
+  customerName      String?
+  customAttributes  String?
+  order             ShopOrders?        @relation("ShopOrdersToLineItems", fields: [orderId], references: [id])
+
+  @@unique([orderId, shopifyId])
+  @@index([orderId, productId])
+  @@index([orderId, variantId])
+}
+
+model shopThemeAssets {
+  id                BigInt   @id @default(autoincrement())
+  shop              String
+  themeName         String?
+  themeId           String?
+  mainJs            String   @default("app-extensions-globals.js")
+  ppEmbedBlock      String?
+  cpBlock           String?
+  pptBlock          String?
+  tpEmbedBlock      String?
+  tspEmbedBlock     String?
+  createdAt         DateTime @default(now()) @db.Timestamp(6)
+  updatedAt         DateTime @updatedAt @db.Timestamp(6)
+  role              String?
+  schemaName        String?
+  status            Boolean  @default(false)
+  cpBlockFlag       Boolean  @default(true)
+  ppEmbedFlag       Boolean  @default(true)
+  pptBlockFlag      Boolean  @default(true)
+  tpEmbedBlockFlag  Boolean  @default(true)
+  tspEmbedBlockFlag Boolean  @default(true)
+  extraAssets       Json
+
+  @@unique([shop, themeId])
+}
+
+model DashboardMetrics {
+  id                                            BigInt   @id @default(autoincrement())
+  shop                                          String
+  storeType                                     String?
+  customerCount                                 Int?
+  customersLastCounted                          BigInt?
+  customersCheckFrequency                       Int      @default(1)
+  complementaryProductCounts                    String?
+  complementaryProductCountsLastChecked         BigInt?
+  complementaryProductCountsFrequency           Int      @default(1)
+  groupCount                                    BigInt?
+  groupCountLastChecked                         BigInt?
+  groupCountFrequency                           Int      @default(1)
+  onlineStoreSetupStatus                        String?
+  onlineStoreSetupStatusLastChecked             BigInt?
+  onlineStoreSetupStatusFrequency               Int      @default(1)
+  upsellTopProductsEnabled                      String?
+  upsellTopProductsEnabledLastChecked           BigInt?
+  upsellTopProductsEnabledFrequency             Int      @default(1)
+  hasWholesalePortalAccessCount                 Boolean?
+  hasWholesalePortalAccessCountLastChecked      BigInt?
+  hasWholesalePortalAccessCountFrequency        Int      @default(1)
+  createdAt                                     DateTime @default(now()) @db.Timestamp(6)
+  updatedAt                                     DateTime @updatedAt @db.Timestamp(6)
+  upsellComplementaryProductsEnabled            String?
+  upsellComplementaryProductsEnabledFrequency   Int      @default(1)
+  upsellComplementaryProductsEnabledLastChecked BigInt?
+  unsetTopProductsCount                         Int?
+  unsetTopProductsCountFrequency                Int      @default(1)
+  unsetTopProductsCountLastChecked              BigInt?
+}
+
+model ShopSegmentsData {
+  id                  BigInt                @id @default(autoincrement())
+  shop                String
+  segmentName         String
+  segmentId           String
+  status              Boolean               @default(true)
+  query               String?
+  defaultDiscount     String?
+  defaultMOQ          String?
+  paymentMethods      String?
+  buyerCount          String?
+  tagID               String?
+  createdAt           DateTime              @default(now()) @db.Timestamp(6)
+  updatedAt           DateTime              @updatedAt @db.Timestamp(6)
+  memberCount         Int?
+  hasIncludedProducts Boolean?
+  collectionDiscounts Json                  @default("{}")
+  productDiscounts    Json                  @default("{}")
+  storeDiscounts      Json                  @default("{}")
+  description         String?
+  buyers              ShopSegmentsBuyers[]  @relation("SegmentToBuyers")
+  variants            ShopSegmentVariants[] @relation("SegmentToVariants")
+  collections         ShopSegmentCollections[] @relation("SegmentToCollections")
+  @@unique([shop, segmentName])
+}
+
+model ShopSegmentsBuyers {
+  id           BigInt            @id @default(autoincrement())
+  segmentId    BigInt?
+  customerId   String?
+  createdAt    DateTime          @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime          @updatedAt @db.Timestamp(6)
+  customerName String?
+  segment      ShopSegmentsData? @relation("SegmentToBuyers", fields: [segmentId], references: [id])
+
+  @@unique([segmentId, customerId])
+}
+
+model ShopSegmentVariants {
+  id            BigInt            @id @default(autoincrement())
+  segmentId     BigInt
+  variantId     BigInt
+  discount_type String?
+  priceConfig   Json
+  volumeConfig  Json
+  included      Boolean           @default(false)
+  segment       ShopSegmentsData? @relation("SegmentToVariants", fields: [segmentId], references: [id])
+
+  @@unique([segmentId, variantId])
+}
+
+model ShopSegmentCollections {
+  id            BigInt            @id @default(autoincrement())
+  segmentId     BigInt
+  collectionId  BigInt
+  discount_type String?
+  priceConfig   Json
+  volumeConfig  Json
+  included      Boolean           @default(false)
+  segment       ShopSegmentsData? @relation("SegmentToCollections", fields: [segmentId], references: [id])
+
+  @@unique([segmentId, collectionId])
+}
+
+model ShopProducts {
+  id              BigInt         @id @default(autoincrement())
+  storeId         BigInt
+  productId       BigInt
+  title           String?
+  price           String?
+  handle          String?
+  productType     String?
+  status          String?
+  tags            String?
+  totalInventory  Int?
+  tracksInventory Boolean        @default(true)
+  variantsCount   Int?
+  vendor          String?
+  variants        ShopVariants[] @relation("ShopProductVariants")
+
+  @@unique([productId, storeId])
+}
+
+model ShopVariants {
+  id                BigInt        @id @default(autoincrement())
+  storeId           BigInt
+  productId         BigInt
+  variantId         BigInt
+  compareAtPrice    String?
+  title             String?
+  displayName       String?
+  inventoryPolicy   String?
+  inventoryQuantity Int?
+  price             String?
+  sku               String?
+  unitPrice         String?
+  product           ShopProducts? @relation("ShopProductVariants", fields: [productId, storeId], references: [productId, storeId])
+
+  @@unique([storeId, productId, variantId])
+}
+
+model ParentAppSettings {
+  id          BigInt   @id @default(autoincrement())
+  appUrl      String
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime @updatedAt @db.Timestamp(6)
+  videoGuides String?
+}
+
+model ComplementaryProducts {
+  id                            String   @id @unique
+  shop                          String
+  productVariantId              String
+  productTitle                  String
+  complementaryProductVariantId String?
+  createdAt                     DateTime @default(now())
+  modifiedAt                    DateTime @default(now())
+}
+
+model GroupPriceConfig {
+  id         String   @id
+  groupId    String
+  configId   String
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @default(now())
+}
+
+model StoreSettings {
+  id          String @id
+  shop        String
+  configType  String
+  configName  String
+  configValue String
+}
+
+model WholesalePricingBuyers {
+  id                String   @id @unique
+  shop              String
+  companyName       String?
+  companyAddress    String?
+  contactFirstName  String?
+  contactLastName   String?
+  emailAddress      String?
+  phoneNumber       String?
+  buyerType         String?
+  locationCount     Int?     @default(0)
+  status            String
+  createdAt         DateTime @default(now())
+  modifiedAt        DateTime @default(now())
+  shopifyCustomerId String?
+  info              String?
+}
+
+model AppSettings {
+  id         String   @id @unique
+  shop       String
+  key        String
+  value      Boolean
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @default(now())
+}
+
+model ProductVolumePriceConfig {
+  id            String   @id @unique
+  shop          String
+  discountId    String
+  productId     String
+  volume_config String
+  price_config  String
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  modifiedAt    DateTime @default(now())
+
+  @@unique([productId, discountId])
+}
+
+model PaidOrder {
+  id               String   @id @unique
+  shop             String
+  orderNumber      String
+  orderTotal       Float
+  createdAt        DateTime
+  transactionMonth Int
+  transactionYear  Int
+}
+
+model StoreUsageBillingInfo {
+  id          BigInt   @id @default(autoincrement())
+  shop        String
+  lastChecked String
+  paymentFlag Int      @db.SmallInt
+  apiResponse String?
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime @updatedAt @db.Timestamp(6)
+}
+
+model StoreSubscriptionInfo {
+  id             BigInt   @id @default(autoincrement())
+  shop           String
+  currentTier    String
+  totalEarnings  String
+  upsellEarnings String
+  createdAt      DateTime @default(now()) @db.Timestamp(6)
+  updatedAt      DateTime @updatedAt @db.Timestamp(6)
+}
+
+model ShopCSVPricingConfig {
+  id              Int      @id @default(autoincrement())
+  shopId          BigInt
+  variantId       BigInt 
+  groupName       String?
+  type            String?
+  value           String?
+  minimum         Int?
+  maximum         Int?
+  increment       Int?
+  priceConfig     Json
+  status          Boolean  @default(false)  
+}
+
+model ShopKlaviyoRecords {
+  id              Int      @id @default(autoincrement())
+  shop            String?
+  first_name      String?
+  last_name       String?
+  email           String?
+  myshopifyDomain String?
+  status          Boolean  @default(false)
+  apiResponse     String?
+  createdAt       DateTime @default(now()) @db.Timestamp(6)
+  updatedAt       DateTime @updatedAt @db.Timestamp(6)
+}
+
+model ShopNetTermsOrdersToDraftOrders {
+  id             Int      @id @default(autoincrement())
+  shop           String?
+  shopifyOrderId String?
+  draftOrderId   String?
+  draftOrderResp String?
+  createdAt      DateTime @default(now()) @db.Timestamp(6)
+  updatedAt      DateTime @updatedAt @db.Timestamp(6)
+
+  @@unique([shop, shopifyOrderId])
+}
+
+model WebhookJobs {
+  id        Int      @id @default(autoincrement())
+  shop      String?
+  status    Boolean  @default(false)
+  body      String?
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
+  topic     String?
+  webhookId String
+
+  @@unique([shop, webhookId])
+}
+
+model VolumePricingData {
+  id                   String  @id @default(cuid())
+  shop                 String
+  productVariantId     String?
+  productVariantHandle String?
+  returnData           Json
+  tag                  String?
+
+  @@index([shop, tag, productVariantId])
+  @@index([shop, tag, productVariantHandle])
+}
+
+model WholesaleRegFormTemplates {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  content   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

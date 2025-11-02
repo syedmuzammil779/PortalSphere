@@ -1,0 +1,10 @@
+-- AlterTable
+ALTER TABLE "WholesalePricingBuyers" ALTER COLUMN "companyName" DROP NOT NULL,
+ALTER COLUMN "companyAddress" DROP NOT NULL,
+ALTER COLUMN "contactFirstName" DROP NOT NULL,
+ALTER COLUMN "contactLastName" DROP NOT NULL,
+ALTER COLUMN "emailAddress" DROP NOT NULL,
+ALTER COLUMN "phoneNumber" DROP NOT NULL,
+ALTER COLUMN "buyerType" DROP NOT NULL,
+ALTER COLUMN "locationCount" DROP NOT NULL,
+ALTER COLUMN "locationCount" SET DEFAULT 0;

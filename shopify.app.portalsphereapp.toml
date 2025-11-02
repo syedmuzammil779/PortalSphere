@@ -1,0 +1,36 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "84b4cc11b6384b40604b0e071e6ca888"
+application_url = "https://portal-sphere-app.onrender.com/webhooks"
+embedded = true
+name = "PortalSphereApp"
+handle = "portalsphereapp-1"
+
+[webhooks]
+api_version = "2024-10"
+
+  [[webhooks.subscriptions]]
+  topics = [
+  "app/uninstalled",
+  "customers/create",
+  "customers/update",
+  "products/create",
+  "products/delete",
+  "products/update"
+]
+  uri = ""
+  compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_inventory,read_draft_orders,write_draft_orders,read_companies,read_content,read_customers,read_discounts,read_orders,read_payment_terms,read_products,read_themes,write_content,write_customers,write_discounts,write_online_store_pages,write_products,write_shipping"
+
+[auth]
+redirect_urls = [
+  "https://portal-sphere-app.onrender.com/webhooks/auth/callback",
+  "https://portal-sphere-app.onrender.com/webhooks/auth/shopify/callback",
+  "https://portal-sphere-app.onrender.com/webhooks/api/auth/callback"
+]
+
+[pos]
+embedded = false
