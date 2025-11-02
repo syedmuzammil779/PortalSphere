@@ -1,0 +1,39 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "2920deb7a8abffb75e7b2ae40476e2e9"
+name = "portal-sphere-ppd"
+handle = "portal-sphere-app"
+application_url = "https://portal-sphere-app-ppd.onrender.com/"
+embedded = true
+
+[webhooks]
+api_version = "2024-10"
+
+  [[webhooks.subscriptions]]
+  topics = [
+  "app/uninstalled",
+  "customers/create",
+  "customers/update",
+  "products/create",
+  "products/delete",
+  "products/update"
+]
+  uri = "/webhooks"
+  compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_companies,read_content,read_customers,read_discounts,read_draft_orders,read_inventory,read_orders,read_payment_terms,read_products,unauthenticated_read_product_listings,write_cart_transforms,write_checkout_branding_settings,write_content,write_customer_merge,write_customers,write_delivery_customizations,write_discounts,write_draft_orders,write_gift_cards,write_inventory,write_locations,write_metaobject_definitions,write_metaobjects,write_online_store_pages,write_order_edits,write_orders,write_payment_customizations,write_payment_terms,write_price_rules,write_products,write_purchase_options,write_returns,write_script_tags,write_shipping,write_themes"
+
+[auth]
+redirect_urls = [
+  "https://portal-sphere-app-ppd.onrender.com/auth/callback",
+  "https://portal-sphere-app-ppd.onrender.com/auth/shopify/callback",
+  "https://portal-sphere-app-ppd.onrender.com/api/auth/callback"
+]
+
+[pos]
+embedded = false
+
+[build]
+include_config_on_deploy = true

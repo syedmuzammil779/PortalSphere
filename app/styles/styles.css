@@ -1,0 +1,14 @@
+@media (max-width: 768px) {
+    .your-class {
+      padding: 10px; /* Adjust padding for smaller screens */
+    }
+  
+    .your-class h1 {
+      font-size: 24px; /* Adjust font size for headings */
+    }
+  
+    .your-class p {
+      font-size: 14px; /* Adjust font size for paragraphs */
+    }
+  }
+  @import "tailwindcss";

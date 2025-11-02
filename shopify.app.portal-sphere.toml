@@ -1,0 +1,45 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "b81c1328bc1d5a8bc6df491619c5a883"
+name = "portal-sphere"
+handle = "portal-sphere-2"
+application_url = "https://43aa-143-44-192-125.ngrok-free.app"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = "portalsphere-test-store.myshopify.com"
+include_config_on_deploy = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_inventory, read_draft_orders,write_draft_orders,read_companies,read_content,read_customers,read_discounts,read_orders,read_payment_terms,read_products,read_themes,write_content,write_customers,write_discounts,write_online_store_pages,write_products,write_shipping"
+
+[auth]
+redirect_urls = [
+  "https://portal-sphere-app.onrender.com/auth/callback",
+  "https://portal-sphere-app.onrender.com/auth/shopify/callback",
+  "https://portal-sphere-app.onrender.com/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2024-10"
+
+  [[webhooks.subscriptions]]
+  topics = [
+  "app/uninstalled",
+  "products/create",
+  "products/update",
+  "products/delete",
+  "customers/create",
+  "customers/update"
+]
+  uri = "https://portal-sphere-app.onrender.com/webhooks"
+  compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
+
+  [[webhooks.subscriptions]]
+  topics = [ "customers/create", "customers/update" ]
+  uri = "/webhooks"
+
+[pos]
+embedded = false

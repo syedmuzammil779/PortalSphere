@@ -1,0 +1,28 @@
+api_version = "2024-10"
+
+[[extensions]]
+name = "t:name"
+handle = "portalsphere-shipping-discount"
+
+uid = "ba494607-f039-f245-909b-61c37bf9990a2ddfb55f"
+
+type = "function"
+
+description = "t:description"
+
+  [[extensions.targeting]]
+  target = "purchase.shipping-discount.run"
+  input_query = "src/run.graphql"
+  export = "run"
+
+  [extensions.build]
+  command = ""
+  path = "dist/function.wasm"
+
+  [extensions.ui.paths]
+  create = "/app/shipping-discounts/new"
+  details = "/app/shipping-discounts/:id"
+
+  [[extensions.metafields]]
+  namespace = "$app:shipping-discount"
+  key = "function-configuration"

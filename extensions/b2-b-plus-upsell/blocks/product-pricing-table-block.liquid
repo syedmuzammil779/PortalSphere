@@ -1,0 +1,76 @@
+{% assign api_key =  shop.metafields.b2bplus.SHOPIFY_API_KEY %}
+{% assign shared_secret =  shop.metafields.b2bplus.SHOPIFY_API_SECRET %}
+{% assign timestamp = 'now' | date: '%s' %}
+{% assign message = api_key | append: timestamp %}
+{% assign hmac = message | hmac_sha256: shared_secret %}
+{% assign app_domain = shop.metafields.b2bplus.app_domain %}
+{% assign store_type = shop.metafields.b2bplus.storeType %}
+{% assign nowTime = 'now' | date: '%s' %}
+{% assign customerId = customer.id | url_encode %}
+
+{% capture get_params %}
+?api_key={{ api_key | url_encode }}
+&appDomain={{ app_domain | url_encode }}
+&customerId={{ customerId }}
+&shopId={{ shop.id | url_encode }}
+&shopDomain={{ shop.permanent_domain | url_encode }}
+&storeType={{ store_type | url_encode }}
+&timestamp={{ timestamp | url_encode }}
+&hmac={{ hmac | url_encode }}
+&productVariantId={{ product.selected_or_first_available_variant.id | json }}
+&productId={{ product.id | json }}
+&v={{ nowTime | url_encode }}
+{% endcapture %}
+
+  {% comment %} {% if enable_complementary_products == 'true' and trial_end_date >= current_date %} {% endcomment %}
+  <div class="product-pricing-table-block">
+    <div id='volume-pricing-container' style="margin-bottom: 20px; margin-top: 20px;">
+      <div id="loading-spinner" style="display: none; width: 40px; height: 40px; margin: 20px auto; border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+      <table id='volume-pricing-table' style="width: 100%; border-collapse: collapse; margin-top: 10px; border-radius: 8px; overflow: hidden; border: 1px solid #ddd;">
+        <thead>
+          <tr>
+            <th style="border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2 ; border-top-left-radius: 8px;">Quantity</th>
+            <th style="border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2;">Price</th>
+            <th style="border: 1px solid #ddd; padding: 8px; background-color: #f2f2f2; border-top-right-radius: 8px;">Discount</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+  </div>
+  <style>
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+  {% assign get_params = get_params | strip_newlines %}
+
+  {% assign themeData = shop.metafields.b2bplus.themeScriptsConfig.value %}
+  {% for index in themeData %}
+    {% if index.role == "MAIN" and index.mainJS.status == true %}
+      {% assign mainJS = index.mainJS.status %}
+      <script src="https://{{ app_domain }}/{{ index.mainJS.src }}?v={{ nowTime }}" type="text/javascript" defer></script>  
+      {% break %}
+    {% endif %}
+  {% endfor %}
+
+  {% for index in themeData %}
+    {% if index.role == "MAIN" and index.pptBlock.status == true %}
+      {% assign pptBlockStatus = index.pptBlock.status %}
+      <script src="https://{{ app_domain }}/{{ index.pptBlock.src }}{{ get_params }}" type="text/javascript" defer></script>  
+      {% break %}
+    {% endif %}
+  {% endfor %}
+
+  <link rel="stylesheet" href="{{ 'styles.css' | asset_url }}" />
+
+{% schema %}
+{
+  "name": "Product Pricing Table",
+  "target": "section",
+  "enabled_on": {
+    "templates": ["product"]
+  },
+  "settings": []
+}
+{% endschema %}

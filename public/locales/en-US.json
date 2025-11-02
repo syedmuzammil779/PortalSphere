@@ -1,0 +1,40 @@
+{
+    "Loading": "Loading...",
+    "App": {
+      "name": "B2B Plus",
+      "description": "B2B wholesale and volume pricing solution"
+    },
+    "Page": {
+      "title": "B2B Plus",
+      "description": "Manage your B2B wholesale and volume pricing"
+    },
+    "CustomerGroups": {
+      "title": "Customer Groups",
+      "description": "Manage customer groups and pricing"
+    },
+    "UpsellTopProducts": {
+      "title": "Upsell Top Products",
+      "description": "Configure top product recommendations"
+    },
+    "UpsellComplementaryProducts": {
+      "title": "Upsell Complementary Products",
+      "description": "Configure complementary product recommendations"
+    },
+    "WholesalePortalAccess": {
+      "title": "Wholesale Portal Access",
+      "description": "Manage wholesale portal access"
+    },
+    "Subscription": {
+      "title": "Subscription",
+      "description": "Manage your subscription"
+    },
+    "Common": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "add": "Add",
+      "search": "Search",
+      "loading": "Loading..."
+    }
+  }

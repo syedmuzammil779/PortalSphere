@@ -1,0 +1,44 @@
+query RunInput {
+  cart {
+    lines {
+      id
+      quantity
+      cost {
+        amountPerQuantity {
+          amount
+          currencyCode
+        }
+      }
+      merchandise {
+        ... on ProductVariant {
+          id
+          product {
+            metafield(namespace: "b2bplus", key: "collectionDiscounts") {
+              value
+            }  
+          }
+          metafield(namespace: "b2bplus", key: "volumeDiscounts") {
+            value
+          }
+        }
+      }
+    }
+    buyerIdentity {
+      customer {
+        metafield(namespace: "customer_tag", key: "group_tag") {
+          value
+        }
+      }
+    }
+  }
+  discountNode {
+    metafield(namespace: "$app:b2b-volume-discount", key: "function-configuration") {
+      value
+    }
+  }
+  shop {
+    metafield(namespace: "b2bplus", key: "volumeDiscounts") {
+      value
+    }
+  }
+}

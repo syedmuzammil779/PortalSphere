@@ -1,0 +1,41 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "b2a278dab3222d5ff5b929c91c9ef82b"
+application_url = "https://mf-harris-persian-rehab.trycloudflare.com"
+embedded = true
+name = "PortalSphere App"
+handle = "portalsphere-app-1"
+
+[build]
+include_config_on_deploy = true
+dev_store_url = "store202411.myshopify.com"
+automatically_update_urls_on_dev = true
+
+[webhooks]
+api_version = "2024-10"
+
+  [[webhooks.subscriptions]]
+  topics = [
+  "app/uninstalled",
+  "products/create",
+  "products/update",
+  "products/delete",
+  "customers/create",
+  "customers/update"
+]
+  uri = "/webhooks"
+  compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_inventory,read_draft_orders,write_draft_orders,read_companies,read_content,read_customers,read_discounts,read_orders,read_payment_terms,read_products,read_themes,write_content,write_customers,write_discounts,write_online_store_pages,write_products,write_shipping"
+
+[auth]
+redirect_urls = [
+  "https://mf-harris-persian-rehab.trycloudflare.com/auth/callback",
+  "https://mf-harris-persian-rehab.trycloudflare.com/auth/shopify/callback",
+  "https://mf-harris-persian-rehab.trycloudflare.com/api/auth/callback"
+]
+
+[pos]
+embedded = false

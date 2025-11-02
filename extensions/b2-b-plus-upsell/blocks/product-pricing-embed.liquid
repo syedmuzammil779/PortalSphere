@@ -1,0 +1,60 @@
+{% assign api_key =  shop.metafields.b2bplus.SHOPIFY_API_KEY %}
+{% assign shared_secret =  shop.metafields.b2bplus.SHOPIFY_API_SECRET %}
+{% assign timestamp = 'now' | date: '%s' %}
+{% assign message = api_key | append: timestamp %}
+{% assign hmac = message | hmac_sha256: shared_secret %}
+{% assign app_domain = shop.metafields.b2bplus.app_domain %}
+{% assign enable_top_products = shop.metafields.b2bplus.enableTopProducts %}
+{% assign store_type = shop.metafields.b2bplus.storeType %}
+{% assign nowTime = 'now' | date: '%s' %}
+{% assign customerId = customer.id | url_encode %}
+
+{% capture get_params %}
+?api_key={{ api_key | url_encode }}
+&appDomain={{ app_domain | url_encode }}
+&enableTopProducts={{enable_top_products}}
+&productVariantId={{ product.selected_or_first_available_variant.id | json }}
+&productId={{ product.id | json }}
+&customerId={{ customerId }}
+&shopId={{ shop.id | url_encode }}
+&authSignature={{ shop.metafields.b2bplus.auth_signature | json }}
+&shopDomain={{ shop.permanent_domain | url_encode }}
+&storeType={{ store_type | url_encode }}
+&timestamp={{ timestamp | url_encode }}
+&hmac={{ hmac | url_encode }}
+&v={{ nowTime | url_encode }}
+{% endcapture %}
+
+  {% assign themeData = shop.metafields.b2bplus.themeScriptsConfig.value %}
+  {% assign get_params = get_params | strip_newlines %}
+
+  {% for index in themeData %}
+
+    {% for extraAsset in index.extraAssets %}
+      {{ extraAsset | replace: "app_domain", app_domain }}
+    {% endfor %}
+
+    {% if index.role == "MAIN" and index.mainJS.status == true %}
+      <script src="https://{{ app_domain }}/{{ index.mainJS.src }}?v={{ nowTime }}" type="text/javascript" defer></script>
+    {% endif %}
+
+    {% if index.role == "MAIN" and index.ppEmbedBlock.status == true %}
+      <script src="https://{{ app_domain }}/{{ index.ppEmbedBlock.src }}{{ get_params }}" type="text/javascript" defer></script>
+    {% endif %}
+
+    {% if index.role == "MAIN" and index.tspEmbedBlock.status == true %}
+      <script src="https://{{ app_domain }}/{{ index.tspEmbedBlock.src }}{{ get_params }}" type="text/javascript" defer></script>
+    {% endif %}
+
+    {% if index.role == "MAIN" and index.tpEmbedBlock.status == true %}
+      <script src="https://{{ app_domain }}/{{ index.tpEmbedBlock.src }}{{ get_params }}" type="text/javascript" defer></script>
+    {% endif %}
+
+  {% endfor %}
+{% schema %}
+{
+  "name": "PortalSphere",
+  "target": "body",
+  "settings": []
+}
+{% endschema %}

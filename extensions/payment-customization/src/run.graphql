@@ -1,0 +1,20 @@
+query RunInput {
+  cart {
+    buyerIdentity {
+      customer {
+        metafield(namespace: "customer_tag", key: "group_tag") {
+          value
+        }
+      }
+    }
+  }
+  shop {
+    metafield(namespace: "b2bplus", key: "PaymentMethodOptions") {
+      value
+    }
+  }
+  paymentMethods {
+    id 
+    name
+  }
+}
